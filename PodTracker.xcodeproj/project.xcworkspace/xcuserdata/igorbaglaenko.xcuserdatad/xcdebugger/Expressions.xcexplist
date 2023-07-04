@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "PodGlobalData.onReceiveMonitorData(rowBytes:):PodData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "bleData.periodDuration">
+            </PersistentString>
+            <PersistentString
+               value = "bleData.periodStartIndx">
+            </PersistentString>
+            <PersistentString
+               value = "bleData.currentIndex">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodBleData.setMonitoringData(rowBytes:):BleData.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PodBleData.setTotalData(rowBytes:startIndex:):BleData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "currentIndex">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodBleData.setPodIdData(rowBytes:):BleData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "rowBytes[31]">
+            </PersistentString>
+            <PersistentString
+               value = "rowBytes[30]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "BleCom.onReceiveBleMsg():BleCom.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PodGlobalData.setPeriodData():PodData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "periodStart">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodBleData.getPeriodData(index:):BleData.swift">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
