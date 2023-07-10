@@ -16,6 +16,7 @@
 		E02D458F2A23C23E00E4E852 /* PodData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02D458E2A23C23E00E4E852 /* PodData.swift */; };
 		E02D45912A3A590F00E4E852 /* BleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02D45902A3A590F00E4E852 /* BleData.swift */; };
 		E02D45932A4CD77600E4E852 /* BleCom.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02D45922A4CD77600E4E852 /* BleCom.swift */; };
+		E0C0ACB72A579E1E0049E5A8 /* BearingProtocolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C0ACB62A579E1E0049E5A8 /* BearingProtocolView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		E02D458E2A23C23E00E4E852 /* PodData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodData.swift; sourceTree = "<group>"; };
 		E02D45902A3A590F00E4E852 /* BleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleData.swift; sourceTree = "<group>"; };
 		E02D45922A4CD77600E4E852 /* BleCom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleCom.swift; sourceTree = "<group>"; };
+		E0C0ACB62A579E1E0049E5A8 /* BearingProtocolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearingProtocolView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 			isa = PBXGroup;
 			children = (
 				E02D457C2A1BC02500E4E852 /* PodTrackerApp.swift */,
+				E0C0ACB62A579E1E0049E5A8 /* BearingProtocolView.swift */,
 				E02D457E2A1BC02500E4E852 /* ContentView.swift */,
 				E02D458A2A1BC50500E4E852 /* CustomGauge.swift */,
 				E02D458C2A1C6AE500E4E852 /* CustomBarGraph.swift */,
@@ -153,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E02D45932A4CD77600E4E852 /* BleCom.swift in Sources */,
+				E0C0ACB72A579E1E0049E5A8 /* BearingProtocolView.swift in Sources */,
 				E02D458B2A1BC50500E4E852 /* CustomGauge.swift in Sources */,
 				E02D458D2A1C6AE500E4E852 /* CustomBarGraph.swift in Sources */,
 				E02D458F2A23C23E00E4E852 /* PodData.swift in Sources */,
@@ -287,6 +291,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PodTracker/Preview Content\"";
+				DEVELOPMENT_TEAM = MH44Z85RK5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -315,6 +320,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PodTracker/Preview Content\"";
+				DEVELOPMENT_TEAM = MH44Z85RK5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

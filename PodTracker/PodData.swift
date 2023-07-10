@@ -14,6 +14,12 @@ struct PodAlert: Identifiable {
     var steps:  String
     var id = UUID()
 }
+struct BearingProtocol {
+    var start: String
+    var end:   String
+    var front: String
+    var back:  String
+}
 class PodGlobalData : ObservableObject {
     let day  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
     let hour = ["12am","1am","2am","3am","4am","5am","6am","7am",
@@ -25,6 +31,8 @@ class PodGlobalData : ObservableObject {
     
     @Published var connectionStatus: String = "Scanning POD devices"
     @Published var batteryStatus:    String = "Battery Level: 100% "
+    @Published var codeVersion:      String = ""
+    @Published var macAddress   :    String = ""
     @Published var frontPercentage:  Double = 0
     @Published var backPercentage:   Double = 0
     @Published var frontPosition:    Int    = 0
@@ -42,23 +50,56 @@ class PodGlobalData : ObservableObject {
     @Published var range:            String = ""
     @Published var pickerID:         Int    = 1
     @Published var barData =         [PodAlert]()
-    
+    @Published var schedule =        [BearingProtocol] ()
+    @Published var endDate:          String = ""
     
     var bleData          = PodBleData()
-    
-    var weekIndex:    Int = 0
+    var weekIndex:   Int = 0
     var dayIndex:    Int = 0
     let dayInterval: Int = 60 * 60 * 24
     var timer:    Timer? = nil
     
     init ( ) {
         let _ = BleCom(podGlobalData: self)
+        let entry = BearingProtocol (start: "Start",
+                                     end:   "End",
+                                     front: "Front",
+                                     back:  "Back" )
+        schedule.append(entry)
+        for _ in 0...4 {
+            let entry = BearingProtocol (start: "",
+                                         end:   "",
+                                         front: "",
+                                         back:  "" )
+            schedule.append(entry)
+        }
     }
     
     func onReceivePodID(rowBytes: Data) {
         bleData.setPodIdData(rowBytes: rowBytes)
         batteryStatus    = "Battery Level: \(bleData.batteryLevel)%"
         connectionStatus = "Receiving Data ..."
+        codeVersion      = bleData.codeVersion
+        macAddress       = bleData.macAddr
+               
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM dd"
+        dateFormatter.locale = Locale(identifier: "en_US")
+        
+        var noOfDays = 0
+        for i in 0...4 {
+            if Int(bleData.duration[i]) > 0 {
+                let startdate = bleData.startDate.addingTimeInterval( Double(noOfDays * dayInterval))
+                noOfDays += Int(bleData.duration[i]) - 1
+                let enddate   = bleData.startDate.addingTimeInterval( Double(noOfDays * dayInterval))
+                noOfDays += 1
+                schedule[i + 1].start =  dateFormatter.string(from: startdate)
+                schedule[i + 1].end   =  dateFormatter.string(from: enddate)
+                schedule[i + 1].front =  "\(bleData.frontMargin[i])%"
+                schedule[i + 1].back =   "\(bleData.backMargin[i])%"
+                endDate = dateFormatter.string(from: enddate)
+            }
+        }
     }
     func onReceiveDailyData ( rowBytes: Data ) {
         bleData.setDailyData(rowBytes: rowBytes)

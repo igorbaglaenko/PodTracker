@@ -56,10 +56,10 @@ struct CustomBarGraph: View {
                 .onEnded { value in
                     print(value.translation)
                     switch(value.translation.width, value.translation.height) {
-                    case (...0, -30...30):
+                    case (...0, -80...80):
                         podData.setStartIndex(dir: 1)
                         break;
-                    case (0..., -30...30):
+                    case (0..., -80...80):
                         podData.setStartIndex(dir: -1)
                         break;
                     default:
