@@ -6,12 +6,12 @@
 //
 
 import Foundation
-struct PodAlert: Identifiable {
-    var entry:  String
+struct PodAlert:       Identifiable {
+    var entry:         String
     var alertsPercent: Double
     var stepsPercent:  Double
-    var alerts: String
-    var steps:  String
+    var alerts:        String
+    var steps:         String
     var id = UUID()
 }
 struct BearingProtocol {
@@ -20,7 +20,10 @@ struct BearingProtocol {
     var front: String
     var back:  String
 }
-class PodGlobalData : ObservableObject {
+protocol ReceiveBleData {
+    func onReceiveBleData (rowData: Data)
+}
+class PodGlobalData : ObservableObject , ReceiveBleData {
     let day  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
     let hour = ["12am","1am","2am","3am","4am","5am","6am","7am",
                 "8am","9am","10am","11am","12pm","1pm","2pm","3pm",
@@ -28,7 +31,7 @@ class PodGlobalData : ObservableObject {
     let hours = ["12am - 7am",
                  "8am - 3pm",
                  "4pm - 11pm"]
-    
+
     @Published var connectionStatus: String = "Scanning POD devices"
     @Published var batteryStatus:    String = "Battery Level: 100% "
     @Published var codeVersion:      String = ""
@@ -59,8 +62,19 @@ class PodGlobalData : ObservableObject {
     let dayInterval: Int = 60 * 60 * 24
     var timer:    Timer? = nil
     
+    enum bleStates {
+        case connecting,
+             services,
+             conneceted,
+             readPodId,
+             readDailyData,
+             readWeeklyData,
+             monitoring
+    }
+    var bleState: bleStates
+    
     init ( ) {
-        let _ = BleCom(podGlobalData: self)
+        let _ = PodBleCom(podGlobalData: self)
         let entry = BearingProtocol (start: "Start",
                                      end:   "End",
                                      front: "Front",
@@ -75,6 +89,43 @@ class PodGlobalData : ObservableObject {
         }
     }
     
+    func onReceiveBleData(rowData: Data) {
+        switch (bleState) {
+        case .connecting:
+            onReceiveStatusData(status: "Connecting...")
+            bleState = bleStates.services
+            break
+        case .services:
+            onReceiveStatusData(status: "Discovering POD Services")
+            bleState = bleStates.conneceted
+            break
+        case .conneceted:
+            onReceiveStatusData(status: "Connected")
+            bleState = bleStates.readPodId
+            break
+        case .readPodId:
+            buildPodIdData()
+            onReceivePodID(rowBytes: podIdData)
+            bleState = bleStates.readDailyData
+            break
+        case .readDailyData:
+           // buildDailyData()
+            onReceiveDailyData(rowBytes: podDailyData)
+            bleState = bleStates.readWeeklyData
+            break
+        case .readWeeklyData:
+            txIndex = onReceiveTotalData(rowBytes: buildWeeklyData(startIndx: txIndex), startIndex: txIndex)
+            if txIndex == 0 {
+                bleState = bleStates.monitoring
+            }
+            break
+        case .monitoring:
+            let data = buildMonitorData()
+            onReceiveMonitorData(rowBytes: data)
+            break
+   
+        }
+    }
     func onReceivePodID(rowBytes: Data) {
         bleData.setPodIdData(rowBytes: rowBytes)
         batteryStatus    = "Battery Level: \(bleData.batteryLevel)%"
@@ -189,9 +240,13 @@ class PodGlobalData : ObservableObject {
             })
         }
     }
-    func onReceiveStatusData ( status: String) {
-        connectionStatus = status
+    func onReceiveStatusData ( rowBytes: Data) {
+        bleData.setStatusData(rowBytes: rowBytes )
+        connectionStatus = bleData.bleStatus
     }
+    
+    
+    
     // Request to update data when switch between 'weekly' and 'today'
     func setBarType ( ) {
         setAlertsAndSteps()
