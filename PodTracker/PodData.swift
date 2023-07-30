@@ -20,8 +20,30 @@ struct BearingProtocol {
     var front: String
     var back:  String
 }
+enum BleMsgId: UInt8 {
+    case wrongvalue      = 0x00
+    case scanning        = 0x01
+    case discovering     = 0x02
+    case connected       = 0x03
+    case disconnected    = 0x04
+    case sentSyncPodData = 0x05
+    case sentTransfer    = 0x06
+}
+enum bleStates {
+    case connecting,
+         readPodId,
+         syncPodData,
+         readDailyData,
+         requestTransfer,
+         readWeeklyData,
+         connected,
+         monitoring,
+         disconnected
+}
 protocol ReceiveBleData {
     func onReceiveBleData (rowData: Data)
+    func onReceiveBleMsg  (msgId: BleMsgId )
+    
 }
 class PodGlobalData : ObservableObject , ReceiveBleData {
     let day  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
@@ -32,7 +54,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
                  "8am - 3pm",
                  "4pm - 11pm"]
 
-    @Published var connectionStatus: String = "Scanning POD devices"
+    @Published var connectionStatus: String = "Disconnected"
     @Published var batteryStatus:    String = "Battery Level: 100% "
     @Published var codeVersion:      String = ""
     @Published var macAddress   :    String = ""
@@ -61,20 +83,11 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     var dayIndex:    Int = 0
     let dayInterval: Int = 60 * 60 * 24
     var timer:    Timer? = nil
+    var txIndex:     Int = 0
     
-    enum bleStates {
-        case connecting,
-             services,
-             conneceted,
-             readPodId,
-             readDailyData,
-             readWeeklyData,
-             monitoring
-    }
     var bleState: bleStates
-    
     init ( ) {
-        let _ = PodBleCom(podGlobalData: self)
+        bleState = .disconnected
         let entry = BearingProtocol (start: "Start",
                                      end:   "End",
                                      front: "Front",
@@ -88,44 +101,81 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             schedule.append(entry)
         }
     }
-    
+    // BLE State Machine
+    func onReceiveBleMsg(msgId: BleMsgId) {
+        // POD connected. Requst read POD_ID
+        if msgId == .connected {
+            connectionStatus = "Connected"
+            bleData.readPodID()
+            bleState = .readPodId
+        }
+        // POD synchronized. Request read DAILY_DATA
+        if msgId == .sentSyncPodData {
+            bleData.readDailyData()
+            bleState = .readDailyData
+        }
+        // POD ready for transfering data. Request read WEEKLY_DATA
+        else if msgId == .sentTransfer {
+            bleData.readWeeklyData()
+            bleState = .readWeeklyData
+        }
+        // POD disconnected
+        else if msgId == .disconnected {
+            connectionStatus = "No POD detected"
+        }
+        // Display connection status
+        else if msgId != .wrongvalue {
+            bleData.setStatusData(status: msgId)
+        }
+    }
     func onReceiveBleData(rowData: Data) {
-        switch (bleState) {
-        case .connecting:
-            onReceiveStatusData(status: "Connecting...")
-            bleState = bleStates.services
-            break
-        case .services:
-            onReceiveStatusData(status: "Discovering POD Services")
-            bleState = bleStates.conneceted
-            break
-        case .conneceted:
-            onReceiveStatusData(status: "Connected")
-            bleState = bleStates.readPodId
-            break
+        switch bleState {
         case .readPodId:
-            buildPodIdData()
-            onReceivePodID(rowBytes: podIdData)
-            bleState = bleStates.readDailyData
+            if rowData.count == 55 {
+                onReceivePodID(rowBytes: rowData)
+                // Verify POD ID. Request Sync Time and Data
+                if bleData.validatePodData() {
+                    bleData.writeSyncData()
+                    bleState = .syncPodData
+                }
+                // POD not recognized. Disconnect and shutdown
+                else {
+                    // stop scanning
+                    // output message "Pod is not supported"
+                    bleData.disconnectPod ( )
+                    bleState = .disconnected
+                }
+            }
             break
         case .readDailyData:
-           // buildDailyData()
-            onReceiveDailyData(rowBytes: podDailyData)
-            bleState = bleStates.readWeeklyData
+            onReceiveDailyData(rowBytes: rowData)
+            txIndex = 0;
+            bleData.writeTransferData( startIndx: txIndex )
+            bleState = .requestTransfer
             break
         case .readWeeklyData:
-            txIndex = onReceiveTotalData(rowBytes: buildWeeklyData(startIndx: txIndex), startIndex: txIndex)
+            txIndex = onReceiveTotalData(rowBytes: rowData, startIndex: txIndex)
             if txIndex == 0 {
-                bleState = bleStates.monitoring
+                bleState = .monitoring
+            }
+            else {
+                bleData.writeTransferData(startIndx: txIndex)
+                bleState = .requestTransfer
             }
             break
         case .monitoring:
-            let data = buildMonitorData()
-            onReceiveMonitorData(rowBytes: data)
+            if rowData[0] == 0x44 {
+                onReceiveMonitorData(rowBytes: rowData)
+            }
+            else if rowData[0] == 0x41 {
+                onReceiveAlarmData(rowBytes: rowData)
+            }
             break
-   
+        default:
+            break;
         }
     }
+    // Update BLE Data
     func onReceivePodID(rowBytes: Data) {
         bleData.setPodIdData(rowBytes: rowBytes)
         batteryStatus    = "Battery Level: \(bleData.batteryLevel)%"
@@ -240,11 +290,6 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             })
         }
     }
-    func onReceiveStatusData ( rowBytes: Data) {
-        bleData.setStatusData(rowBytes: rowBytes )
-        connectionStatus = bleData.bleStatus
-    }
-    
     
     
     // Request to update data when switch between 'weekly' and 'today'

@@ -8,58 +8,6 @@
 import Foundation
 import SwiftUI
 
-/*
-PodID Characteristic:
----------------------
-{
-0     char              version[7];
-7     char              macAddr[18];
-25    uint8_t           batteryLevel;
-     THRESHOLDS
-     {
-26    uint8_t         version;
-27    uint8_t         generateAlarm;
-        PATIENT_INFO
-        {
-28    uint8_t           bodyWeight;
-29    uint8_t           injuryType;
-30    uint16_t          startYear;
-32    uint16_t          firstDay;
-34    uint8_t           frontSittingWeight;
-35    uint8_t           backSittingWeight;
-36    uint8_t           frontFullWeight;
-37    uint8_t           backFullWeight;
-        }
-        SCHEDULE [5]
-        {
-38,41,44,47,50   uint8_t           duration;
-39,42,45,48,51   uint8_t           frontPercent;
-40,43 46,49,52   uint8_t           backPercent;
-        }
-53    uint16_t        checkSum;
-    }
-}
- 
- MONITORING_DATA
- ----------------
- {
- 0  uint8_t      msgID;
- 1  uint8_t      batteryLevel;
- 2  uint8_t      backPercent;
- 3  uint8_t      frontPercent;
- 4  uint8_t      curHour;
- 5  uint8_t      lsb_DaySteps;
- 6  uint8_t      msb_DaySteps;
- 7  uint8_t      lsb_DayAlarms;
- 8  uint8_t      msb_DayAlarms;
- 9  uint8_t      CurIndx;
- 10 uint8_t      lsb_TotalSteps;
- 11 uint8_t      msb_TotalSteps;
- 12 uint8_t      lsb_TotalAlarms;
- 13 uint8_t      msb_TotalAlarms;
- }
- */
-
 
 class PodBleData  {
     @EnvironmentObject var podData: PodGlobalData
@@ -77,6 +25,7 @@ class PodBleData  {
     var periodDuration:   Int  = 0  // period total days
     var codeVersion:   String  = "" // version (7 bytes)
     var macAddr:       String  = "" // MAC address (18 bytes)
+    var statusMsg:     String  = "Disconected"
     var dailySteps             = [Int](repeating: 0, count: 24)        // daily steps array
     var dailyAlerts            = [Int](repeating: 0, count: 24)        // daily alerts array
     var totalSteps             = [Int](repeating: 0, count: 7 * 54 + 12) // weekly steps array
@@ -94,8 +43,32 @@ class PodBleData  {
     var  nextPeriod:     Bool  = false
     var  completeMonitor:Bool  = false
     
-//    var blecommunication = BleCom()
-    //POD_ID_DATA
+    var podBLE = PodBleCom()
+    // Request POD_ID
+    func readPodID ( ) {
+        podBLE.readValue(characteristic: podBLE.podIdCharacteristic)
+    }
+    // Request SYNC_POD
+    func writeSyncData ( ) {
+        let data = Data()
+        podBLE.writeOpData(value: <#T##Data#>)
+    }
+    // Request DAILY_DATA
+    func readDailyData ( ) {
+        
+    }
+    // Request start transfer Data
+    func writeTransferData (startIndx: Int ){
+        
+    }
+    // Request TOTAL_DATA
+    func readWeeklyData ( ) {
+        
+    }
+    func disconnectPod ( ) {
+        
+    }
+    // parse POD_ID_DATA
     func setPodIdData ( rowBytes: Data) {
         var src = [UInt8](rowBytes[0...6])
         codeVersion = String(decoding: src, as: UTF8.self)
@@ -125,7 +98,7 @@ class PodBleData  {
             indx += 1
         }
     }
-    // DAILY_DATA
+    // parse DAILY_DATA
     func setDailyData (rowBytes: Data) {
         var offset = 0
         currentHour = getShort(data: rowBytes, offset: &offset)
@@ -134,7 +107,7 @@ class PodBleData  {
             dailyAlerts[i] = getShort(data: rowBytes, offset: &offset)
         }
     }
-    // TOTAL_DATA
+    // parse TOTAL_DATA
     func setTotalData (rowBytes: Data, startIndex: inout Int) -> Bool {
         var offset = 0
         let length = getShort(data: rowBytes, offset: &offset)
@@ -154,7 +127,7 @@ class PodBleData  {
         }
         return startIndex < currentIndex
     }
-    // MONITORING_DATA
+    // parse MONITORING_DATA
     func setMonitoringData ( rowBytes: Data ) -> Bool{
         var nextDay = false
         nextPeriod  = false
@@ -196,11 +169,33 @@ class PodBleData  {
         }
         return nextDay
     }
-    // ALARM_DATA
+    // parse ALARM_DATA
     func setAlarmData ( rowBytes: Data) {
         backAlert = Int(rowBytes[0])
         frontAlert = Int(rowBytes[1])
     }
+    // parse STATUS_EVENT
+    func setStatusData (status: BleMsgId) {
+        switch status {
+        case .scanning:
+            statusMsg = "Scanning POD devices"
+            break;
+        case .discovering:
+            statusMsg = "Discovering Services"
+            break;
+        case .connected:
+            statusMsg = "Connected"
+            break
+        case .disconnected:
+            // bring BLE to scannig mode
+            statusMsg = "Disconnected"
+            break
+        default:
+            statusMsg = "No POD detected"
+            break
+        }
+    }
+   
     // Utility functions
     func getPeriodData ( index: Int ) {
         var switchIndx = 0
@@ -225,5 +220,9 @@ class PodBleData  {
         offset += 2
         return res
     }
-
+    func validatePodData ( ) -> Bool {
+        // compare Threshold version
+        // compare MAC address
+        return true
+    }
 }
