@@ -100,6 +100,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
                                          back:  "" )
             schedule.append(entry)
         }
+        bleData.podBLE.SendBleMsg = self
     }
     // BLE State Machine
     func onReceiveBleMsg(msgId: BleMsgId) {
@@ -126,6 +127,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         // Display connection status
         else if msgId != .wrongvalue {
             bleData.setStatusData(status: msgId)
+            connectionStatus = bleData.statusMsg
         }
     }
     func onReceiveBleData(rowData: Data) {
@@ -135,8 +137,8 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
                 onReceivePodID(rowBytes: rowData)
                 // Verify POD ID. Request Sync Time and Data
                 if bleData.validatePodData() {
-                    bleData.writeSyncData()
-                    bleState = .syncPodData
+//                    bleData.writeSyncData()
+//                    bleState = .syncPodData
                 }
                 // POD not recognized. Disconnect and shutdown
                 else {

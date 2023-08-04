@@ -46,12 +46,14 @@ class PodBleData  {
     var podBLE = PodBleCom()
     // Request POD_ID
     func readPodID ( ) {
-        podBLE.readValue(characteristic: podBLE.podIdCharacteristic)
+        if let podId = podBLE.podIdCharacteristic {
+            podBLE.readValue(characteristic: podId)
+        } 
     }
     // Request SYNC_POD
     func writeSyncData ( ) {
         let data = Data()
-        podBLE.writeOpData(value: <#T##Data#>)
+        podBLE.writeOpData(value: data)
     }
     // Request DAILY_DATA
     func readDailyData ( ) {

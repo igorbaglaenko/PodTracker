@@ -94,7 +94,7 @@ struct ContentView: View {
                         Button("Mute Alarm") {
                             
                         }
-                        NavigationLink("Weight bearing protocol..." ) {
+                        NavigationLink("View Weight bearing protocol" ) {
                             BearingProtocolView()
                         }
                     }
