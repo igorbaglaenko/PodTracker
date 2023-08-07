@@ -9,8 +9,11 @@ import Foundation
 import SwiftUI
 
 
+
 class PodBleData  {
     @EnvironmentObject var podData: PodGlobalData
+   
+    
     // Presentation Data
     var batteryLevel:     Int  = 0  // battery level
     var frontPercentage:  Int  = 0  // front max percent for period
@@ -43,34 +46,86 @@ class PodBleData  {
     var  nextPeriod:     Bool  = false
     var  completeMonitor:Bool  = false
     
+// Initialize BKE communication
     var podBLE = PodBleCom()
-    // Request POD_ID
+// Request SYNC_POD
+    func writeSyncData ( ) {
+        var data = Data (repeating: 0, count: 20)
+        let date = Date()
+        let calendar = Calendar.current
+        let hour    = calendar.component(.hour, from: date)
+        let minute  = calendar.component(.minute, from: date)
+        let second  = calendar.component(.second, from: date)
+        let day     = calendar.ordinality(of: .day, in: .year, for: date)!
+        let year    = calendar.component(.year, from: date)
+        data[0] = 0x01
+        data[1] = UInt8(minute)
+        data[2] = UInt8(second)
+        data[3] = UInt8(hour)
+        data[6] = UInt8(day & 0xFF)
+        data[7] = UInt8((day >> 8) & 0xFF)
+        data[8] = UInt8(year & 0xFF)
+        data[9] = UInt8((year >> 8) & 0xFF)
+        podBLE.sentMsgId = .sentSyncPodData
+        podBLE.writeOpData(value: data)
+    }
+// Request Mute Alarm
+    func writeMuteAlarm (state: Bool ) {
+        var data = Data (repeating: 0, count: 20)
+        if state {
+            data[0] = 4
+        }
+        else {
+            data[0] = 5
+        }
+        podBLE.sentMsgId = .sentMute
+        podBLE.writeOpData(value: data)
+    }
+// Request Monitoring Mode
+    func writeMonitorMode (state: Bool ) {
+        var data = Data (repeating: 0, count: 20)
+        if state {
+            data[0] = 2
+        }
+        else {
+            data[0] = 3
+        }
+        podBLE.sentMsgId = .sentMonitor
+        podBLE.writeOpData(value: data)
+    }
+// Request start transfer Data
+    func writeTransferData (startIndx: Int ){
+        var data = Data (repeating: 0, count: 20)
+        data[0] = 0x0A
+        data[1] = 0x01
+        data[2] = UInt8(startIndx & 0xFF)
+        data[3] = UInt8((startIndx >> 8) & 0xFF)
+        podBLE.sentMsgId = .sentTransfer
+        podBLE.writeOpData(value: data)
+    }
+// Request POD_ID
     func readPodID ( ) {
         if let podId = podBLE.podIdCharacteristic {
             podBLE.readValue(characteristic: podId)
-        } 
+        }
     }
-    // Request SYNC_POD
-    func writeSyncData ( ) {
-        let data = Data()
-        podBLE.writeOpData(value: data)
-    }
-    // Request DAILY_DATA
+// Request DAILY_DATA
     func readDailyData ( ) {
-        
+        if let podId = podBLE.dailyDataCharacteristic {
+            podBLE.readValue(characteristic: podId)
+        }
     }
-    // Request start transfer Data
-    func writeTransferData (startIndx: Int ){
-        
-    }
-    // Request TOTAL_DATA
+// Request TOTAL_DATA
     func readWeeklyData ( ) {
-        
+        if let podId = podBLE.weeklyDataCharacteristic {
+            podBLE.readValue(characteristic: podId)
+        }
     }
+// Request disconnect
     func disconnectPod ( ) {
-        
+        podBLE.cancelConnection()
     }
-    // parse POD_ID_DATA
+// parse POD_ID_DATA
     func setPodIdData ( rowBytes: Data) {
         var src = [UInt8](rowBytes[0...6])
         codeVersion = String(decoding: src, as: UTF8.self)
@@ -92,7 +147,7 @@ class PodBleData  {
         
         var indx = 0
         lastDayIndex = 0
-        for i in stride(from: 38, to: 50, by: 3) {
+        for i in stride(from: 38, to: 53, by: 3) {
             duration[indx] = rowBytes[i]
             lastDayIndex += Int(duration[indx])
             frontMargin[indx] = rowBytes[i+1]
@@ -100,7 +155,7 @@ class PodBleData  {
             indx += 1
         }
     }
-    // parse DAILY_DATA
+// parse DAILY_DATA
     func setDailyData (rowBytes: Data) {
         var offset = 0
         currentHour = getShort(data: rowBytes, offset: &offset)
@@ -109,18 +164,15 @@ class PodBleData  {
             dailyAlerts[i] = getShort(data: rowBytes, offset: &offset)
         }
     }
-    // parse TOTAL_DATA
+// parse TOTAL_DATA
     func setTotalData (rowBytes: Data, startIndex: inout Int) -> Bool {
         var offset = 0
         let length = getShort(data: rowBytes, offset: &offset)
-        var stopIndex = startIndex
+        let stopIndex = startIndex + length
+        
         if startIndex == 0 {
             currentIndex = getShort(data: rowBytes, offset: &offset)
             getPeriodData( index: currentIndex )
-            stopIndex += (length - 2) / 4
-        }
-        else {
-            stopIndex  += length / 4
         }
         while  startIndex < stopIndex {
             totalSteps [startIndex + firstDayIndex]  = getShort(data: rowBytes, offset: &offset)
@@ -129,7 +181,7 @@ class PodBleData  {
         }
         return startIndex < currentIndex
     }
-    // parse MONITORING_DATA
+// parse MONITORING_DATA
     func setMonitoringData ( rowBytes: Data ) -> Bool{
         var nextDay = false
         nextPeriod  = false
@@ -171,12 +223,12 @@ class PodBleData  {
         }
         return nextDay
     }
-    // parse ALARM_DATA
+// parse ALARM_DATA
     func setAlarmData ( rowBytes: Data) {
         backAlert = Int(rowBytes[0])
         frontAlert = Int(rowBytes[1])
     }
-    // parse STATUS_EVENT
+// parse STATUS_EVENT
     func setStatusData (status: BleMsgId) {
         switch status {
         case .scanning:
@@ -185,7 +237,7 @@ class PodBleData  {
         case .discovering:
             statusMsg = "Discovering Services"
             break;
-        case .connected:
+        case .sentMute:
             statusMsg = "Connected"
             break
         case .disconnected:
@@ -198,7 +250,7 @@ class PodBleData  {
         }
     }
    
-    // Utility functions
+// Utility functions
     func getPeriodData ( index: Int ) {
         var switchIndx = 0
         var startIndx  = 0

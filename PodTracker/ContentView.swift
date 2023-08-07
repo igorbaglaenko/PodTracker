@@ -91,10 +91,10 @@ struct ContentView: View {
                         Text("POD id: \(podData.macAddress)")
                     }
                     Menu ("Action"){
-                        Button("Mute Alarm") {
-                            
+                        Button(podData.muteAlarm) {
+                            podData.changeMuteAlarm()
                         }
-                        NavigationLink("View Weight bearing protocol" ) {
+                        NavigationLink("Weight bearing protocol" ) {
                             BearingProtocolView()
                         }
                     }

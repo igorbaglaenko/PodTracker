@@ -3,6 +3,53 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "PodBleCom.writeOpData(value:):BleCom.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "value[0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodGlobalData.onBLEReceiveData(rowData:):PodData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "txIndex">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodBleCom.peripheral(_:didWriteValueFor:error:):BleCom.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "-UUID">
+            </PersistentString>
+            <PersistentString
+               value = "opDataUUID">
+            </PersistentString>
+            <PersistentString
+               value = "characteristic.uuid">
+            </PersistentString>
+            <PersistentString
+               value = "opDataCharacteristic">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "BleCom.onReceiveBleMsg():BleCom.swift">
+      </ContextState>
+      <ContextState
+         contextName = "__psynch_rw_wrlock:(null)">
+      </ContextState>
+      <ContextState
+         contextName = "PodBleData.getPeriodData(index:):BleData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "duration">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "PodGlobalData.onReceiveMonitorData(rowBytes:):PodData.swift">
          <PersistentStrings>
             <PersistentString
@@ -13,17 +60,6 @@
             </PersistentString>
             <PersistentString
                value = "bleData.currentIndex">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "PodBleData.setMonitoringData(rowBytes:):BleData.swift">
-      </ContextState>
-      <ContextState
-         contextName = "PodBleData.setTotalData(rowBytes:startIndex:):BleData.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "currentIndex">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -39,7 +75,41 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "BleCom.onReceiveBleMsg():BleCom.swift">
+         contextName = "PodBleData.setTotalData(rowBytes:startIndex:):BleData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "rowBytes[41]">
+            </PersistentString>
+            <PersistentString
+               value = "currentIndex">
+            </PersistentString>
+            <PersistentString
+               value = "totalAlerts">
+            </PersistentString>
+            <PersistentString
+               value = "totalSteps">
+            </PersistentString>
+            <PersistentString
+               value = "rowBytes[40]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "BluetoothCom.centralManager(_:didDiscover:advertisementData:rssi:):BleCom.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "peripheralsNames">
+            </PersistentString>
+            <PersistentString
+               value = "NSNumber">
+            </PersistentString>
+            <PersistentString
+               value = "advertisementData">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodBleData.setMonitoringData(rowBytes:):BleData.swift">
       </ContextState>
       <ContextState
          contextName = "PodGlobalData.setPeriodData():PodData.swift">
@@ -48,9 +118,6 @@
                value = "periodStart">
             </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "PodBleData.getPeriodData(index:):BleData.swift">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

@@ -28,6 +28,8 @@ enum BleMsgId: UInt8 {
     case disconnected    = 0x04
     case sentSyncPodData = 0x05
     case sentTransfer    = 0x06
+    case sentMonitor     = 0x07
+    case sentMute        = 0x08
 }
 enum bleStates {
     case connecting,
@@ -41,8 +43,8 @@ enum bleStates {
          disconnected
 }
 protocol ReceiveBleData {
-    func onReceiveBleData (rowData: Data)
-    func onReceiveBleMsg  (msgId: BleMsgId )
+    func onBLEReceiveData (rowData: Data)
+    func onBLEReceiveMsg  (msgId: BleMsgId )
     
 }
 class PodGlobalData : ObservableObject , ReceiveBleData {
@@ -53,7 +55,9 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     let hours = ["12am - 7am",
                  "8am - 3pm",
                  "4pm - 11pm"]
-
+    
+    @Published var muteAlarm  :      String =  UserDefaults.standard.string(forKey: "MUTE_POD_MOD") ?? "Mute Pod Alarm"
+    
     @Published var connectionStatus: String = "Disconnected"
     @Published var batteryStatus:    String = "Battery Level: 100% "
     @Published var codeVersion:      String = ""
@@ -102,11 +106,17 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         }
         bleData.podBLE.SendBleMsg = self
     }
+    func changeMuteAlarm () {
+        let mode = muteAlarm == "Mute Pod Alarm"
+        muteAlarm = mode ? "Activate Pod Alarm" : "Mute Pod Alarm"
+        bleData.writeMuteAlarm(state: mode)
+        UserDefaults.standard.set(muteAlarm, forKey: "MUTE_POD_MOD")
+    }
     // BLE State Machine
-    func onReceiveBleMsg(msgId: BleMsgId) {
+    func onBLEReceiveMsg(msgId: BleMsgId) {
         // POD connected. Requst read POD_ID
         if msgId == .connected {
-            connectionStatus = "Connected"
+            connectionStatus = "Verifying POD id"
             bleData.readPodID()
             bleState = .readPodId
         }
@@ -124,21 +134,25 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         else if msgId == .disconnected {
             connectionStatus = "No POD detected"
         }
+        else if msgId == .sentMonitor {
+            let mode = muteAlarm == "Activate Pod Alarm"
+            bleData.writeMuteAlarm(state: mode)
+        }
         // Display connection status
         else if msgId != .wrongvalue {
             bleData.setStatusData(status: msgId)
             connectionStatus = bleData.statusMsg
         }
     }
-    func onReceiveBleData(rowData: Data) {
+    func onBLEReceiveData(rowData: Data) {
         switch bleState {
         case .readPodId:
             if rowData.count == 55 {
                 onReceivePodID(rowBytes: rowData)
                 // Verify POD ID. Request Sync Time and Data
                 if bleData.validatePodData() {
-//                    bleData.writeSyncData()
-//                    bleState = .syncPodData
+                    bleData.writeSyncData()
+                    bleState = .syncPodData
                 }
                 // POD not recognized. Disconnect and shutdown
                 else {
@@ -159,6 +173,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             txIndex = onReceiveTotalData(rowBytes: rowData, startIndex: txIndex)
             if txIndex == 0 {
                 bleState = .monitoring
+                bleData.writeMonitorMode(state: true)
             }
             else {
                 bleData.writeTransferData(startIndx: txIndex)
