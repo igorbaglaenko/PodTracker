@@ -122,12 +122,12 @@ class PodBleData  {
     }
 // parse POD_ID_DATA
     func setPodIdData ( rowBytes: Data) {
-        var src = [UInt8](rowBytes[0...6])
+        var src = [UInt8](rowBytes[0...5])
         codeVersion = String(decoding: src, as: UTF8.self)
-        src = [UInt8](rowBytes[7...24])
+        src = [UInt8](rowBytes[7...23])
         macAddr = String(decoding: src, as: UTF8.self)
         batteryLevel = Int(rowBytes[25])
-      
+        
         let version = Int(codeVersion) ?? 0
         if version < PodVersion {
             return

@@ -73,13 +73,19 @@
          contextName = "PodBleData.setPodIdData(rowBytes:):BleData.swift">
          <PersistentStrings>
             <PersistentString
-               value = "rowBytes[31]">
+               value = "macAddr">
+            </PersistentString>
+            <PersistentString
+               value = "codeVersion">
             </PersistentString>
             <PersistentString
                value = "codeVersion">
             </PersistentString>
             <PersistentString
                value = "rowBytes[30]">
+            </PersistentString>
+            <PersistentString
+               value = "rowBytes[31]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
