@@ -35,6 +35,10 @@ class PodBleData  {
     var totalAlerts            = [Int](repeating: 0, count: 7 * 54 + 12) // weekly alerts array
     
     // POD Data
+    let  PodVersion:      Int  = 230813
+    var  validPodId:      Bool  = false
+    var  completeMonitor:Bool  = false
+    
     var  duration              = [UInt8](repeating: 0, count: 5)        // period durations
     var  frontMargin           = [UInt8](repeating: 0, count: 5)        // period front margim
     var  backMargin            = [UInt8](repeating: 0, count: 5)        // period back margin
@@ -44,28 +48,14 @@ class PodBleData  {
     var  currentIndex:    Int  = 0 // current index in Weekly data alligned to Sunday
     var  lastDayIndex:    Int  = 0
     var  nextPeriod:     Bool  = false
-    var  completeMonitor:Bool  = false
     
 // Initialize BKE communication
     var podBLE = PodBleCom()
 // Request SYNC_POD
     func writeSyncData ( ) {
         var data = Data (repeating: 0, count: 20)
-        let date = Date()
-        let calendar = Calendar.current
-        let hour    = calendar.component(.hour, from: date)
-        let minute  = calendar.component(.minute, from: date)
-        let second  = calendar.component(.second, from: date)
-        let day     = calendar.ordinality(of: .day, in: .year, for: date)!
-        let year    = calendar.component(.year, from: date)
         data[0] = 0x01
-        data[1] = UInt8(minute)
-        data[2] = UInt8(second)
-        data[3] = UInt8(hour)
-        data[6] = UInt8(day & 0xFF)
-        data[7] = UInt8((day >> 8) & 0xFF)
-        data[8] = UInt8(year & 0xFF)
-        data[9] = UInt8((year >> 8) & 0xFF)
+        addTimestamp(data: &data)
         podBLE.sentMsgId = .sentSyncPodData
         podBLE.writeOpData(value: data)
     }
@@ -86,6 +76,7 @@ class PodBleData  {
         var data = Data (repeating: 0, count: 20)
         if state {
             data[0] = 2
+            addTimestamp(data: &data)
         }
         else {
             data[0] = 3
@@ -125,6 +116,10 @@ class PodBleData  {
     func disconnectPod ( ) {
         podBLE.cancelConnection()
     }
+// Request to start scan
+    func startScan ( ) {
+        podBLE.startScan()
+    }
 // parse POD_ID_DATA
     func setPodIdData ( rowBytes: Data) {
         var src = [UInt8](rowBytes[0...6])
@@ -133,6 +128,14 @@ class PodBleData  {
         macAddr = String(decoding: src, as: UTF8.self)
         batteryLevel = Int(rowBytes[25])
       
+        let version = Int(codeVersion) ?? 0
+        if version < PodVersion {
+            return
+        }
+        else {
+            validPodId = true
+        }
+            
         var components = DateComponents()
         var offset = 30
         let year = getShort(data: rowBytes,offset: &offset)
@@ -197,7 +200,8 @@ class PodBleData  {
             }
         }
         currentHour = hour
-        let indx = Int(rowBytes[9])
+        var offset = 9
+        let indx = getShort(data: rowBytes, offset: &offset)//Int(rowBytes[9])
         if !completeMonitor {
             if indx == lastDayIndex {
                 completeMonitor = true
@@ -213,10 +217,10 @@ class PodBleData  {
                     nextDay = true
                 }
                 currentIndex = indx
-                var offset = 5
+                offset = 5
                 dailySteps[currentHour] = getShort(data: rowBytes, offset: &offset)
                 dailyAlerts[currentHour] = getShort(data: rowBytes, offset: &offset)
-                offset = 10
+                offset = 11
                 totalSteps[currentIndex + firstDayIndex] = getShort(data: rowBytes, offset: &offset)
                 totalAlerts[currentIndex + firstDayIndex] = getShort(data: rowBytes, offset: &offset)
             }
@@ -225,8 +229,8 @@ class PodBleData  {
     }
 // parse ALARM_DATA
     func setAlarmData ( rowBytes: Data) {
-        backAlert = Int(rowBytes[0])
-        frontAlert = Int(rowBytes[1])
+        backAlert = Int(rowBytes[1])
+        frontAlert = Int(rowBytes[2])
     }
 // parse STATUS_EVENT
     func setStatusData (status: BleMsgId) {
@@ -267,7 +271,7 @@ class PodBleData  {
             }
             startIndx = switchIndx
         }
-//        completeMonitor = index == lastDayIndex
+        completeMonitor = index == lastDayIndex
     }
     func getShort ( data: Data, offset: inout Int) -> Int {
         let res: Int = (Int(data[offset + 1]) << 8 ) + Int(data[offset])
@@ -277,6 +281,22 @@ class PodBleData  {
     func validatePodData ( ) -> Bool {
         // compare Threshold version
         // compare MAC address
-        return true
+        return validPodId
+    }
+    func addTimestamp (data: inout Data) {
+        let date = Date()
+        let calendar = Calendar.current
+        let hour    = calendar.component(.hour, from: date)
+        let minute  = calendar.component(.minute, from: date)
+        let second  = calendar.component(.second, from: date)
+        let day     = calendar.ordinality(of: .day, in: .year, for: date)!
+        let year    = calendar.component(.year, from: date)
+        data[1] = UInt8(minute)
+        data[2] = UInt8(second)
+        data[3] = UInt8(hour)
+        data[6] = UInt8(day & 0xFF)
+        data[7] = UInt8((day >> 8) & 0xFF)
+        data[8] = UInt8(year & 0xFF)
+        data[9] = UInt8((year >> 8) & 0xFF)
     }
 }

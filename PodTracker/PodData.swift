@@ -81,6 +81,8 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     @Published var barData =         [PodAlert]()
     @Published var schedule =        [BearingProtocol] ()
     @Published var endDate:          String = ""
+    @Published var terminateApp:     Bool   = false
+    @Published var terminateMsg:     String = ""
     
     var bleData          = PodBleData()
     var weekIndex:   Int = 0
@@ -132,7 +134,12 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         }
         // POD disconnected
         else if msgId == .disconnected {
-            connectionStatus = "No POD detected"
+            if bleData.completeMonitor {
+                connectionStatus = "Disconected"
+            }
+            else {
+                bleData.startScan()
+            }
         }
         else if msgId == .sentMonitor {
             let mode = muteAlarm == "Activate Pod Alarm"
@@ -151,38 +158,53 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
                 onReceivePodID(rowBytes: rowData)
                 // Verify POD ID. Request Sync Time and Data
                 if bleData.validatePodData() {
-                    bleData.writeSyncData()
                     bleState = .syncPodData
+                    bleData.writeSyncData()
                 }
                 // POD not recognized. Disconnect and shutdown
                 else {
                     // stop scanning
                     // output message "Pod is not supported"
-                    bleData.disconnectPod ( )
+                    terminateApp = true
+                    terminateMsg = "Please upgrade Pod Firmware"
+                    bleData.completeMonitor = true
                     bleState = .disconnected
+                    bleData.disconnectPod ( )
                 }
             }
             break
         case .readDailyData:
             onReceiveDailyData(rowBytes: rowData)
             txIndex = 0;
-            bleData.writeTransferData( startIndx: txIndex )
             bleState = .requestTransfer
+            bleData.writeTransferData( startIndx: txIndex )
             break
         case .readWeeklyData:
             txIndex = onReceiveTotalData(rowBytes: rowData, startIndex: txIndex)
             if txIndex == 0 {
-                bleState = .monitoring
-                bleData.writeMonitorMode(state: true)
+                // it is possible that monitoring period complete
+                if bleData.completeMonitor {
+                    bleState = .disconnected
+                    bleData.disconnectPod()
+                }
+                else {
+                    bleState = .monitoring
+                    bleData.writeMonitorMode(state: true)
+                }
             }
             else {
-                bleData.writeTransferData(startIndx: txIndex)
                 bleState = .requestTransfer
+                bleData.writeTransferData(startIndx: txIndex)
             }
             break
         case .monitoring:
             if rowData[0] == 0x44 {
+                // it is possible that monitoring period complete
                 onReceiveMonitorData(rowBytes: rowData)
+                if bleData.completeMonitor {
+                    bleState = .disconnected
+                    bleData.disconnectPod()
+                }
             }
             else if rowData[0] == 0x41 {
                 onReceiveAlarmData(rowBytes: rowData)
@@ -199,7 +221,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         connectionStatus = "Receiving Data ..."
         codeVersion      = bleData.codeVersion
         macAddress       = bleData.macAddr
-               
+       
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM dd"
         dateFormatter.locale = Locale(identifier: "en_US")
@@ -215,9 +237,11 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
                 schedule[i + 1].end   =  dateFormatter.string(from: enddate)
                 schedule[i + 1].front =  "\(bleData.frontMargin[i])%"
                 schedule[i + 1].back =   "\(bleData.backMargin[i])%"
-                endDate = dateFormatter.string(from: enddate)
+                
             }
         }
+        let enddate = bleData.startDate.addingTimeInterval( Double(noOfDays * dayInterval))
+        endDate = dateFormatter.string(from: enddate)
     }
     func onReceiveDailyData ( rowBytes: Data ) {
         bleData.setDailyData(rowBytes: rowBytes)
@@ -243,7 +267,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         // Bar data
         weekIndex = ((bleData.currentIndex + bleData.firstDayIndex) / 7 ) * 7
         pickerID = 1
-        setBarType()
+        setBarType(lastPeriod: true)
         return 0
     }
     func onReceiveMonitorData ( rowBytes: Data ) {
@@ -252,12 +276,6 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             if bleData.nextPeriod || bleData.completeMonitor {
                 setPeriodData()
             }
-            let newWeekIndex = ((bleData.currentIndex + bleData.firstDayIndex) / 7 ) * 7
-            if weekIndex == newWeekIndex - 7 {
-                weekIndex = newWeekIndex
-            }
-            // reset daily Index
-            dayIndex = 0
             if bleData.completeMonitor {
                 periodDuration = 100
                 periodComplete = 100
@@ -273,12 +291,12 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             backPosition  = 0
             frontPosition = 0
             pickerID = 1
-            setBarType()
+            setBarType(lastPeriod: true)
         }
         else {
             backPosition  = bleData.backPosition
             frontPosition = bleData.frontPosition
-            setBarType()
+            setBarType(lastPeriod: false)
         }
     }
     func onReceiveAlarmData (rowBytes: Data) {
@@ -300,8 +318,12 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         else if frontPosition > bleData.frontPercentage {
             overloadMsg = "Front Overload!   \(frontPosition)%"
         }
+        if timer != nil {
+            timer?.invalidate()
+            timer = nil
+        }
         if timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false, block: { timer in
+            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: false, block: { timer in
                 self.overloadMsg = "   "
                 self.timer = nil
             })
@@ -310,15 +332,21 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     
     
     // Request to update data when switch between 'weekly' and 'today'
-    func setBarType ( ) {
-        setAlertsAndSteps()
-        setRangeString()
+    func setBarType ( lastPeriod: Bool ) {
         if pickerID == 1 {
+            if lastPeriod {
+                weekIndex = ((bleData.currentIndex + bleData.firstDayIndex) / 7 ) * 7
+            }
             setWeeklyBarData()
         }
         else {
+            if lastPeriod {
+                dayIndex = (bleData.currentHour / 8) * 8
+            }
             setHourlyBarData()
         }
+        setAlertsAndSteps()
+        setRangeString()
     }
     // Request to update data when slide over the bar graph
     func setStartIndex (dir: Int ) {
@@ -451,7 +479,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         dateFormatter.locale = Locale(identifier: "en_US")
         dateFormatter.dateFormat = "MMM dd"
         if bleData.completeMonitor {
-            overloadMsg     = "Tracking stopped "
+            overloadMsg     = ""
             maxAllowedTitle = "    "
             maxAllowed      = "    "
             currentPeriod   = "Weight Bearing Protocol Complete"

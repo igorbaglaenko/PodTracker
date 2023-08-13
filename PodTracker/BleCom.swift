@@ -93,7 +93,7 @@ class PodBleCom: NSObject, CBCentralManagerDelegate {
 //            return
 //        }
         SendBleMsg?.onBLEReceiveMsg(msgId: .disconnected)   // Successfully disconnected
-        startScan()
+//        startScan()
     }
     // Request to start Scan
     func startScan ( ) {

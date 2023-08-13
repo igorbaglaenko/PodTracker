@@ -58,7 +58,7 @@ struct ContentView: View {
                         Text("Weekly").tag(1)
                         Text("Daily").tag(2)
                     })
-                    .onChange(of: podData.pickerID, perform: { (value) in podData.setBarType()})
+                    .onChange(of: podData.pickerID, perform: { (value) in podData.setBarType(lastPeriod: true)})
                     .pickerStyle(.segmented)
                     .frame(width: 200)
                     
@@ -86,7 +86,7 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
                     Menu ("Info") {
-                        Text("ver. 1.0 Jul 5,2023")
+                        Text("ver. 1.0.1 Aug 13,2023")
                         Text("Firmware: \(podData.codeVersion)")
                         Text("POD id: \(podData.macAddress)")
                     }
@@ -100,6 +100,10 @@ struct ContentView: View {
                     }
                 }
             }
+            .alert("Incomatible Firmware", isPresented: $podData.terminateApp, actions: {
+                }, message: {
+                    Text(podData.terminateMsg)
+                })
         }
     }
 }

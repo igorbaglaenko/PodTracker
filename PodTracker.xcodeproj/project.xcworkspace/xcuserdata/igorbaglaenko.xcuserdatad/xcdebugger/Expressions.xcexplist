@@ -16,6 +16,9 @@
             <PersistentString
                value = "txIndex">
             </PersistentString>
+            <PersistentString
+               value = "bleData.completeMonitor">
+            </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
@@ -47,6 +50,9 @@
             <PersistentString
                value = "duration">
             </PersistentString>
+            <PersistentString
+               value = "lastDayIndex">
+            </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
@@ -68,6 +74,9 @@
          <PersistentStrings>
             <PersistentString
                value = "rowBytes[31]">
+            </PersistentString>
+            <PersistentString
+               value = "codeVersion">
             </PersistentString>
             <PersistentString
                value = "rowBytes[30]">
