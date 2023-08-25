@@ -267,53 +267,5 @@
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9DD575D7-A515-4CF5-9609-F14E00C63623"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PodTracker/BleData.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
-            landmarkName = "setPodIdData(rowBytes:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "9DD575D7-A515-4CF5-9609-F14E00C63623 - 98ec63dc349c5ede"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "PodTracker.PodBleData.setPodIdData(rowBytes: Foundation.Data) -&gt; ()"
-                  moduleName = "PodTracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/igorbaglaenko/Documents/PodTracker/PodTracker/PodTracker/BleData.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "131"
-                  endingLineNumber = "131"
-                  offsetFromSymbolStart = "1440">
-               </Location>
-               <Location
-                  uuid = "9DD575D7-A515-4CF5-9609-F14E00C63623 - 98ec63dc349c5ede"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "PodTracker.PodBleData.setPodIdData(rowBytes: Foundation.Data) -&gt; ()"
-                  moduleName = "PodTracker"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/igorbaglaenko/Documents/PodTracker/PodTracker/PodTracker/BleData.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "131"
-                  endingLineNumber = "131"
-                  offsetFromSymbolStart = "1484">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

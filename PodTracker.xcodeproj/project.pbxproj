@@ -16,7 +16,6 @@
 		E02D458F2A23C23E00E4E852 /* PodData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02D458E2A23C23E00E4E852 /* PodData.swift */; };
 		E02D45912A3A590F00E4E852 /* BleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02D45902A3A590F00E4E852 /* BleData.swift */; };
 		E02D45932A4CD77600E4E852 /* BleCom.swift in Sources */ = {isa = PBXBuildFile; fileRef = E02D45922A4CD77600E4E852 /* BleCom.swift */; };
-		E0BAF5EC2A76CE54008585B4 /* BleSimulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0BAF5EB2A76CE54008585B4 /* BleSimulator.swift */; };
 		E0C0ACB72A579E1E0049E5A8 /* BearingProtocolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C0ACB62A579E1E0049E5A8 /* BearingProtocolView.swift */; };
 /* End PBXBuildFile section */
 
@@ -31,7 +30,6 @@
 		E02D458E2A23C23E00E4E852 /* PodData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodData.swift; sourceTree = "<group>"; };
 		E02D45902A3A590F00E4E852 /* BleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleData.swift; sourceTree = "<group>"; };
 		E02D45922A4CD77600E4E852 /* BleCom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleCom.swift; sourceTree = "<group>"; };
-		E0BAF5EB2A76CE54008585B4 /* BleSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleSimulator.swift; sourceTree = "<group>"; };
 		E0C0ACB62A579E1E0049E5A8 /* BearingProtocolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearingProtocolView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -72,7 +70,6 @@
 				E02D458C2A1C6AE500E4E852 /* CustomBarGraph.swift */,
 				E02D458E2A23C23E00E4E852 /* PodData.swift */,
 				E02D45922A4CD77600E4E852 /* BleCom.swift */,
-				E0BAF5EB2A76CE54008585B4 /* BleSimulator.swift */,
 				E02D45902A3A590F00E4E852 /* BleData.swift */,
 				E02D45802A1BC02700E4E852 /* Assets.xcassets */,
 				E02D45822A1BC02700E4E852 /* Preview Content */,
@@ -161,7 +158,6 @@
 				E02D45932A4CD77600E4E852 /* BleCom.swift in Sources */,
 				E0C0ACB72A579E1E0049E5A8 /* BearingProtocolView.swift in Sources */,
 				E02D458B2A1BC50500E4E852 /* CustomGauge.swift in Sources */,
-				E0BAF5EC2A76CE54008585B4 /* BleSimulator.swift in Sources */,
 				E02D458D2A1C6AE500E4E852 /* CustomBarGraph.swift in Sources */,
 				E02D458F2A23C23E00E4E852 /* PodData.swift in Sources */,
 				E02D45912A3A590F00E4E852 /* BleData.swift in Sources */,
