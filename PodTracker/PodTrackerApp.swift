@@ -9,7 +9,8 @@ import SwiftUI
 
 @main
 struct PodTrackerApp: App {
-    @StateObject private var podData = PodGlobalData()
+    @StateObject public var podData = PodGlobalData()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

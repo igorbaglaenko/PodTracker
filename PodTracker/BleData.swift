@@ -36,7 +36,7 @@ class PodBleData  {
     
     // POD Data
     let  PodVersion:      Int  = 230813
-    var  validPodId:      Bool  = false
+    var  validPodId:      Bool = false
     var  completeMonitor:Bool  = false
     
     var  duration              = [UInt8](repeating: 0, count: 5)        // period durations
@@ -49,8 +49,9 @@ class PodBleData  {
     var  lastDayIndex:    Int  = 0
     var  nextPeriod:     Bool  = false
     
-// Initialize BKE communication
+// Initialize BLE communication
     var podBLE = PodBleCom()
+    
 // Request SYNC_POD
     func writeSyncData ( ) {
         var data = Data (repeating: 0, count: 20)
