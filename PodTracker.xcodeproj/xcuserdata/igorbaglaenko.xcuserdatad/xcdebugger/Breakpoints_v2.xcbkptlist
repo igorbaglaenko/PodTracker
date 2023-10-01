@@ -23,22 +23,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "007605DB-72F2-4E03-8ACD-E42EFA937ED9"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PodTracker/BleCom.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "87"
-            endingLineNumber = "87"
-            landmarkName = "centralManager(_:didFailToConnect:error:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "F3151148-B47A-48BB-BF43-2350E5D8EF92"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -46,8 +30,8 @@
             filePath = "PodTracker/PodData.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "322"
-            endingLineNumber = "322"
+            startingLineNumber = "332"
+            endingLineNumber = "332"
             landmarkName = "onReceiveAlarmData(rowBytes:)"
             landmarkType = "7">
             <Locations>
@@ -141,6 +125,51 @@
                   endingLineNumber = "322"
                   offsetFromSymbolStart = "1644">
                </Location>
+               <Location
+                  uuid = "F3151148-B47A-48BB-BF43-2350E5D8EF92 - 4e903d57e818e19f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "PodTracker.PodGlobalData.onReceiveAlarmData(rowBytes: Foundation.Data) -&gt; ()"
+                  moduleName = "PodTracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorbaglaenko/Documents/PodTracker/PodTracker/PodTracker/PodData.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "324"
+                  endingLineNumber = "324"
+                  offsetFromSymbolStart = "1644">
+               </Location>
+               <Location
+                  uuid = "F3151148-B47A-48BB-BF43-2350E5D8EF92 - 4e903d57e818eeb6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "PodTracker.PodGlobalData.onReceiveAlarmData(rowBytes: Foundation.Data) -&gt; ()"
+                  moduleName = "PodTracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorbaglaenko/Documents/PodTracker/PodTracker/PodTracker/PodData.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "331"
+                  endingLineNumber = "331"
+                  offsetFromSymbolStart = "1644">
+               </Location>
+               <Location
+                  uuid = "F3151148-B47A-48BB-BF43-2350E5D8EF92 - 4e903d57e818ee97"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "PodTracker.PodGlobalData.onReceiveAlarmData(rowBytes: Foundation.Data) -&gt; ()"
+                  moduleName = "PodTracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorbaglaenko/Documents/PodTracker/PodTracker/PodTracker/PodData.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "332"
+                  endingLineNumber = "332"
+                  offsetFromSymbolStart = "1644">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -154,8 +183,8 @@
             filePath = "PodTracker/PodData.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "327"
-            endingLineNumber = "327"
+            startingLineNumber = "337"
+            endingLineNumber = "337"
             landmarkName = "onReceiveAlarmData(rowBytes:)"
             landmarkType = "7">
             <Locations>
@@ -264,7 +293,68 @@
                   endingLineNumber = "327"
                   offsetFromSymbolStart = "64">
                </Location>
+               <Location
+                  uuid = "81D64D76-A26E-4BAA-AFDA-28D62836B4AF - 3b09291549cbe68c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (__C.NSTimer) -&gt; () in PodTracker.PodGlobalData.onReceiveAlarmData(rowBytes: Foundation.Data) -&gt; ()"
+                  moduleName = "PodTracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorbaglaenko/Documents/PodTracker/PodTracker/PodTracker/PodData.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "329"
+                  endingLineNumber = "329"
+                  offsetFromSymbolStart = "64">
+               </Location>
+               <Location
+                  uuid = "81D64D76-A26E-4BAA-AFDA-28D62836B4AF - 3b09291549cbe993"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (__C.NSTimer) -&gt; () in PodTracker.PodGlobalData.onReceiveAlarmData(rowBytes: Foundation.Data) -&gt; ()"
+                  moduleName = "PodTracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorbaglaenko/Documents/PodTracker/PodTracker/PodTracker/PodData.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "336"
+                  endingLineNumber = "336"
+                  offsetFromSymbolStart = "64">
+               </Location>
+               <Location
+                  uuid = "81D64D76-A26E-4BAA-AFDA-28D62836B4AF - 3b09291549cbe9b4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (__C.NSTimer) -&gt; () in PodTracker.PodGlobalData.onReceiveAlarmData(rowBytes: Foundation.Data) -&gt; ()"
+                  moduleName = "PodTracker"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/igorbaglaenko/Documents/PodTracker/PodTracker/PodTracker/PodData.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "337"
+                  endingLineNumber = "337"
+                  offsetFromSymbolStart = "64">
+               </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "33D83A63-8EB0-4C0F-A548-BA4DFB8777C2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PodTracker/PodTrackerApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

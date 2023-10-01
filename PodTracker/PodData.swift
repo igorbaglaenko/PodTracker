@@ -57,7 +57,8 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
                  "4pm - 11pm"]
     
     @Published var muteAlarm  :      String =  UserDefaults.standard.string(forKey: "MUTE_POD_MOD") ?? "Mute Pod Alarm"
-    
+    @Published var showActivation:   Bool   =  !UserDefaults.standard.bool(forKey: "ACTIVATION")
+    @Published var  podIDStr  :      String =  UserDefaults.standard.string(forKey: "POD_ID_STR")   ?? ""
     @Published var connectionStatus: String = "Disconnected"
     @Published var batteryStatus:    String = "Battery Level: 100% "
     @Published var codeVersion:      String = ""
@@ -84,6 +85,8 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     @Published var terminateApp:     Bool   = false
     @Published var terminateMsg:     String = ""
     
+    
+    
     var bleData          = PodBleData()
     var weekIndex:   Int = 0
     var dayIndex:    Int = 0
@@ -107,6 +110,13 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             schedule.append(entry)
         }
         bleData.podBLE.SendBleMsg = self
+        bleData.podBLE.setDevAddr(macaddr: podIDStr)
+    }
+    func setDevId( devid id: String ) {
+        UserDefaults.standard.set(id, forKey: "POD_ID_STR")
+        UserDefaults.standard.set(true, forKey: "ACTIVATION")
+        showActivation = false
+        bleData.podBLE.setDevAddr(macaddr: id)     
     }
     func changeMuteAlarm () {
         let mode = muteAlarm == "Mute Pod Alarm"
@@ -114,7 +124,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         bleData.writeMuteAlarm(state: mode)
         UserDefaults.standard.set(muteAlarm, forKey: "MUTE_POD_MOD")
     }
-    // BLE State Machine
+// BLE State Machine
     func onBLEReceiveMsg(msgId: BleMsgId) {
         // POD connected. Requst read POD_ID
         if msgId == .connected {
@@ -214,7 +224,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             break;
         }
     }
-    // Update BLE Data
+// Update BLE Data
     func onReceivePodID(rowBytes: Data) {
         bleData.setPodIdData(rowBytes: rowBytes)
         batteryStatus    = "Battery Level: \(bleData.batteryLevel)%"
@@ -329,9 +339,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             })
         }
     }
-    
-    
-    // Request to update data when switch between 'weekly' and 'today'
+// Request to update data when switch between 'weekly' and 'today'
     func setBarType ( lastPeriod: Bool ) {
         if pickerID == 1 {
             if lastPeriod {
@@ -348,7 +356,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         setAlertsAndSteps()
         setRangeString()
     }
-    // Request to update data when slide over the bar graph
+// Request to update data when slide over the bar graph
     func setStartIndex (dir: Int ) {
         if pickerID == 1 {
             let indx = weekIndex + dir * 7
@@ -371,7 +379,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             setHourlyBarData()
         }
     }
-    // Request to update total steps and alerts
+// Request to update total steps and alerts
     func setAlertsAndSteps ( ) {
         var sumAlerts = 0
         var sumSteps  = 0
@@ -395,7 +403,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         alertsNo = String(format: "%4d", sumAlerts)
         stepsNo  = String(format: "%4d", sumSteps)//String(sumSteps)
     }
-    // Request to update weekly bar graph
+// Request to update weekly bar graph
     func setWeeklyBarData( ) {
         barData = [PodAlert] ()
         for indx in weekIndex...weekIndex + 6 {
@@ -424,7 +432,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             )
         }
     }
-    // Request to update hourly bar graph
+// Request to update hourly bar graph
     func setHourlyBarData( ) {
         barData = [PodAlert] ()
         
@@ -456,7 +464,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         }
         
     }
-    // request to update range of the bar presentation
+// request to update range of the bar presentation
     func setRangeString ( ) {
         if pickerID == 1 {
             let startdate = bleData.startDate.addingTimeInterval( Double((weekIndex - bleData.firstDayIndex) * dayInterval))
@@ -471,7 +479,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             range = hours[dayIndex / 8]
         }
     }
-    // request to update period related data
+// request to update period related data
     func setPeriodData ( ) {
         let start = bleData.startDate.addingTimeInterval( Double(bleData.periodStartIndx * dayInterval))
         let end   = bleData.startDate.addingTimeInterval( Double((bleData.periodEndIndx - 1) * dayInterval))
@@ -497,7 +505,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             periodComplete = Double(bleData.periodEndIndx - bleData.currentIndex + 1)
         }
     }
-    // Request to update gauge indicator
+// Request to update gauge indicator
     func setGaugePosition () {
         backPosition  = bleData.backPosition
         frontPosition = bleData.frontPosition

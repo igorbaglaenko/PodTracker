@@ -11,30 +11,33 @@ import CoreBluetooth
 
 
 class PodBleCom: NSObject, CBCentralManagerDelegate {
-    public var  SendBleMsg:      ReceiveBleData?
-    private var centralManager:  CBCentralManager!
-    private var discoveredPods = [CBPeripheral] ()  // List of Pods with unsupported IP addr
-    private var podSenser:       CBPeripheral?          // discovered Pod
+    public var  SendBleMsg:         ReceiveBleData?
+    private var centralManager:     CBCentralManager!
+    private var discoveredPods    = [CBPeripheral] ()      // List of Pods with unsupported IP addr
+    private var podSenser:          CBPeripheral?          // discovered Pod
+    private var devAddr: String   = ""
     
     private let PodMonitoringUUID = CBUUID(string: "820FC9D1-0C34-4BAF-87FC-758571831943")
-   
-    private let daillyDataUUID = CBUUID(string: "D823A49A-E194-46F0-85DD-6C043A1CB67B")
-    private let weeklyDataUUID = CBUUID(string: "846C755F-BB17-4BDF-B8D5-A778A2C203CB")
-    private let opDataUUID     = CBUUID(string: "7C61A878-DEA9-421A-AC8D-1BB3D418CBB2")
-    private let notifyUUID     = CBUUID(string: "E7EFD0A2-524B-463C-8F1C-01521B43C349")
-    private let podIDUUID      = CBUUID(string: "FDFBB797-6831-4E77-A383-67B5C30CF759")
+    private let daillyDataUUID    = CBUUID(string: "D823A49A-E194-46F0-85DD-6C043A1CB67B")
+    private let weeklyDataUUID    = CBUUID(string: "846C755F-BB17-4BDF-B8D5-A778A2C203CB")
+    private let opDataUUID        = CBUUID(string: "7C61A878-DEA9-421A-AC8D-1BB3D418CBB2")
+    private let notifyUUID        = CBUUID(string: "E7EFD0A2-524B-463C-8F1C-01521B43C349")
+    private let podIDUUID         = CBUUID(string: "FDFBB797-6831-4E77-A383-67B5C30CF759")
     
- 
     public var dailyDataCharacteristic  : CBCharacteristic!
     public var weeklyDataCharacteristic : CBCharacteristic!
     public var opDataCharacteristic     : CBCharacteristic!
     public var notifyCharacteristic     : CBCharacteristic!
     public var podIdCharacteristic      : CBCharacteristic!
-    
+     
     public var sentMsgId: BleMsgId = .wrongvalue
     override init ( ) {
         super.init()
         self.centralManager = CBCentralManager(delegate: self, queue: .main)
+    }
+    // Set device MAC Address
+    public func setDevAddr( macaddr addr: String) {
+        devAddr = addr
     }
     // update BLE state
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -63,11 +66,14 @@ class PodBleCom: NSObject, CBCentralManagerDelegate {
             break
         }
     }
-    // Discover Peripheral
+    // Discover Peripheral. Request connect
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        if devAddr.isEmpty {
+            return
+        }
         if peripheral.name == "podSensor" {
             if !discoveredPods.contains(peripheral) {
-                //central.stopScan()
+                central.stopScan()
                 podSenser = peripheral
                 centralManager.connect(peripheral, options: nil)
             }
@@ -86,7 +92,7 @@ class PodBleCom: NSObject, CBCentralManagerDelegate {
         //discoveredPods.append(peripheral)
         startScan()
     }
-    // POD discom=nnected
+    // POD disconnected
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
 //        if let error = error {
 //            // Handle error
@@ -118,7 +124,7 @@ extension PodBleCom : CBPeripheralDelegate {
             }
         }
     }
-    // Discover Pod Characterestics. Subscribe for Notifications
+    // Discover Pod Characterestics.
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.characteristics else {
             return
@@ -156,7 +162,6 @@ extension PodBleCom : CBPeripheralDelegate {
             SendBleMsg?.onBLEReceiveMsg(msgId: .connected)
         }
     }
-    
     // Request write to BLE characteristic
     func writeOpData(value: Data) {
         podSenser?.writeValue(value, for: opDataCharacteristic, type: .withResponse)
@@ -175,19 +180,28 @@ extension PodBleCom : CBPeripheralDelegate {
     }
     // Received read characteristic data
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-//        if let error = error {
-//            // Handle error
-//            return
-//        }
         guard let value = characteristic.value else {
             return
+        }
+        if characteristic.uuid == podIDUUID {
+            let src = [UInt8](value[7...23])
+            let macAddr = String(decoding: src, as: UTF8.self)
+            if macAddr != devAddr {
+                if !discoveredPods.contains(peripheral) {
+                    discoveredPods.append(peripheral)
+                }
+                centralManager.cancelPeripheralConnection(peripheral)
+                centralManager.scanForPeripherals(withServices: nil)
+                SendBleMsg?.onBLEReceiveMsg(msgId: .scanning)
+                return
+            }
         }
         SendBleMsg?.onBLEReceiveData(rowData: value)
     }
     func cancelConnection ( ) {
-        guard let periphiral = podSenser else {
+        guard let peripheral = podSenser else {
             return
         }
-        centralManager.cancelPeripheralConnection(periphiral)
+        centralManager.cancelPeripheralConnection(peripheral)
     }
 }
