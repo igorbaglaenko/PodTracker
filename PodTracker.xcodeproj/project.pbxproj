@@ -74,9 +74,9 @@
 				E0C8A1E42AB760DF00ED567F /* PodTrackerView.swift */,
 				E02D458A2A1BC50500E4E852 /* CustomGauge.swift */,
 				E02D458C2A1C6AE500E4E852 /* CustomBarGraph.swift */,
+				E02D45902A3A590F00E4E852 /* BleData.swift */,
 				E02D458E2A23C23E00E4E852 /* PodData.swift */,
 				E02D45922A4CD77600E4E852 /* BleCom.swift */,
-				E02D45902A3A590F00E4E852 /* BleData.swift */,
 				E02D45802A1BC02700E4E852 /* Assets.xcassets */,
 				E02D45822A1BC02700E4E852 /* Preview Content */,
 			);

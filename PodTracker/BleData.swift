@@ -37,7 +37,7 @@ class PodBleData  {
     // POD Data
     let  PodVersion:      Int  = 230813
     var  validPodId:      Bool = false
-    var  completeMonitor:Bool  = false
+    var  completeMonitor: Bool = false
     
     var  duration              = [UInt8](repeating: 0, count: 5)        // period durations
     var  frontMargin           = [UInt8](repeating: 0, count: 5)        // period front margim

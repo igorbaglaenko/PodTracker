@@ -3,10 +3,22 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "implicit closure #1 in decompressAray(inString:):ActivationView.swift">
+         contextName = "PodBleData.setTotalData(rowBytes:startIndex:):BleData.swift">
          <PersistentStrings>
             <PersistentString
-               value = "d">
+               value = "rowBytes[41]">
+            </PersistentString>
+            <PersistentString
+               value = "currentIndex">
+            </PersistentString>
+            <PersistentString
+               value = "totalAlerts">
+            </PersistentString>
+            <PersistentString
+               value = "totalSteps">
+            </PersistentString>
+            <PersistentString
+               value = "rowBytes[40]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -22,6 +34,57 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "PodBleData.setMonitoringData(rowBytes:):BleData.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PodGlobalData.setPeriodData():PodData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "bleData.startDate">
+            </PersistentString>
+            <PersistentString
+               value = "periodStart">
+            </PersistentString>
+            <PersistentString
+               value = "bleData.periodStartIndx">
+            </PersistentString>
+            <PersistentString
+               value = "periodEnd">
+            </PersistentString>
+            <PersistentString
+               value = "endDate">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodGlobalData.onReceivePodID(rowBytes:):PodData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "bleData.startDate">
+            </PersistentString>
+            <PersistentString
+               value = "bleData.duration">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "BleCom.onReceiveBleMsg():BleCom.swift">
+      </ContextState>
+      <ContextState
+         contextName = "BluetoothCom.centralManager(_:didDiscover:advertisementData:rssi:):BleCom.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "peripheralsNames">
+            </PersistentString>
+            <PersistentString
+               value = "NSNumber">
+            </PersistentString>
+            <PersistentString
+               value = "advertisementData">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "PodGlobalData.onBLEReceiveData(rowData:):PodData.swift">
          <PersistentStrings>
             <PersistentString
@@ -29,6 +92,17 @@
             </PersistentString>
             <PersistentString
                value = "bleData.completeMonitor">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodBleData.getPeriodData(index:):BleData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "duration">
+            </PersistentString>
+            <PersistentString
+               value = "lastDayIndex">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -58,56 +132,6 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "BleCom.onReceiveBleMsg():BleCom.swift">
-      </ContextState>
-      <ContextState
-         contextName = "__psynch_rw_wrlock:(null)">
-      </ContextState>
-      <ContextState
-         contextName = "PodBleData.getPeriodData(index:):BleData.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "duration">
-            </PersistentString>
-            <PersistentString
-               value = "lastDayIndex">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "decompressAray(inString:):ActivationView.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "keyData[0]">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "PodGlobalData.init():PodData.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "showActivation">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "PodBleCom.centralManager(_:didDiscover:advertisementData:rssi:):BleCom.swift">
-      </ContextState>
-      <ContextState
-         contextName = "PodGlobalData.onReceiveMonitorData(rowBytes:):PodData.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "bleData.currentIndex">
-            </PersistentString>
-            <PersistentString
-               value = "bleData.periodStartIndx">
-            </PersistentString>
-            <PersistentString
-               value = "bleData.periodDuration">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "PodBleData.setPodIdData(rowBytes:):BleData.swift">
          <PersistentStrings>
             <PersistentString
@@ -125,58 +149,57 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "PodBleData.setTotalData(rowBytes:startIndex:):BleData.swift">
+         contextName = "PodBleCom.centralManager(_:didDiscover:advertisementData:rssi:):BleCom.swift">
+      </ContextState>
+      <ContextState
+         contextName = "decompressAray(inString:):ActivationView.swift">
          <PersistentStrings>
             <PersistentString
-               value = "rowBytes[41]">
-            </PersistentString>
-            <PersistentString
-               value = "currentIndex">
-            </PersistentString>
-            <PersistentString
-               value = "totalAlerts">
-            </PersistentString>
-            <PersistentString
-               value = "totalSteps">
-            </PersistentString>
-            <PersistentString
-               value = "rowBytes[40]">
+               value = "keyData[0]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "BluetoothCom.centralManager(_:didDiscover:advertisementData:rssi:):BleCom.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "peripheralsNames">
-            </PersistentString>
-            <PersistentString
-               value = "NSNumber">
-            </PersistentString>
-            <PersistentString
-               value = "advertisementData">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "PodBleData.setMonitoringData(rowBytes:):BleData.swift">
-      </ContextState>
-      <ContextState
-         contextName = "ActivationView.testCrypt(indata:keyData:ivData:operation:):ActivationView.swift">
-      </ContextState>
-      <ContextState
-         contextName = "PodGlobalData.setPeriodData():PodData.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "periodStart">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "__psynch_rw_wrlock:(null)">
       </ContextState>
       <ContextState
          contextName = "PodBleCom.peripheral(_:didUpdateValueFor:error:):BleCom.swift">
          <PersistentStrings>
             <PersistentString
                value = "devAddr">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ActivationView.testCrypt(indata:keyData:ivData:operation:):ActivationView.swift">
+      </ContextState>
+      <ContextState
+         contextName = "implicit closure #1 in decompressAray(inString:):ActivationView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "d">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodGlobalData.onReceiveMonitorData(rowBytes:):PodData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "bleData.periodDuration">
+            </PersistentString>
+            <PersistentString
+               value = "bleData.periodStartIndx">
+            </PersistentString>
+            <PersistentString
+               value = "bleData.currentIndex">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "PodGlobalData.init():PodData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "showActivation">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

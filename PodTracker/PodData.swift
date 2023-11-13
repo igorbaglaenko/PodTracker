@@ -58,7 +58,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     
     @Published var muteAlarm  :      String =  UserDefaults.standard.string(forKey: "MUTE_POD_MOD") ?? "Mute Pod Alarm"
     @Published var showActivation:   Bool   =  !UserDefaults.standard.bool(forKey: "ACTIVATION")
-    @Published var  podIDStr  :      String =  UserDefaults.standard.string(forKey: "POD_ID_STR")   ?? ""
+    @Published var podIDStr  :       String =  UserDefaults.standard.string(forKey: "POD_ID_STR")   ?? ""
     @Published var connectionStatus: String = "Disconnected"
     @Published var batteryStatus:    String = "Battery Level: 100% "
     @Published var codeVersion:      String = ""
@@ -84,7 +84,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     @Published var endDate:          String = ""
     @Published var terminateApp:     Bool   = false
     @Published var terminateMsg:     String = ""
-    
+    @Published var appActiveView:    Bool   = true
     
     
     var bleData          = PodBleData()
@@ -147,7 +147,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             if bleData.completeMonitor {
                 connectionStatus = "Disconected"
             }
-            else {
+            else if appActiveView {
                 bleData.startScan()
             }
         }
@@ -239,12 +239,12 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         var noOfDays = 0
         for i in 0...4 {
             if Int(bleData.duration[i]) > 0 {
-                let startdate = bleData.startDate.addingTimeInterval( Double(noOfDays * dayInterval))
+                let startPeriod = bleData.startDate.addingTimeInterval( Double(noOfDays * dayInterval))
                 noOfDays += Int(bleData.duration[i]) - 1
-                let enddate   = bleData.startDate.addingTimeInterval( Double(noOfDays * dayInterval))
+                let endPeriod   = bleData.startDate.addingTimeInterval( Double(noOfDays * dayInterval))
                 noOfDays += 1
-                schedule[i + 1].start =  dateFormatter.string(from: startdate)
-                schedule[i + 1].end   =  dateFormatter.string(from: enddate)
+                schedule[i + 1].start =  dateFormatter.string(from: startPeriod)
+                schedule[i + 1].end   =  dateFormatter.string(from: endPeriod)
                 schedule[i + 1].front =  "\(bleData.frontMargin[i])%"
                 schedule[i + 1].back =   "\(bleData.backMargin[i])%"
                 
@@ -360,7 +360,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     func setStartIndex (dir: Int ) {
         if pickerID == 1 {
             let indx = weekIndex + dir * 7
-            if indx >= 0 && indx <= bleData.currentIndex {
+            if indx >= 0 && indx <= bleData.currentIndex + bleData.firstDayIndex {
                 weekIndex = indx
             }
         }
@@ -481,6 +481,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     }
 // request to update period related data
     func setPeriodData ( ) {
+       // let today = Date()
         let start = bleData.startDate.addingTimeInterval( Double(bleData.periodStartIndx * dayInterval))
         let end   = bleData.startDate.addingTimeInterval( Double((bleData.periodEndIndx - 1) * dayInterval))
         let dateFormatter = DateFormatter()
@@ -491,14 +492,15 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             maxAllowedTitle = "    "
             maxAllowed      = "    "
             currentPeriod   = "Weight Bearing Protocol Complete"
-            periodStart    = dateFormatter.string(from: bleData.startDate)
-            periodEnd      = dateFormatter.string(from: end)
-            periodDuration = 100
-            periodComplete = 100
+//            periodStart    = dateFormatter.string(from: bleData.startDate)
+//            periodEnd      = endDate
+//            periodDuration = 100
+//            periodComplete = 100
         }
         else {
             maxAllowed     = " Front:\(bleData.frontPercentage)% Back:\(bleData.backPercentage)%"
             currentPeriod  = "Current Period \(bleData.periodNumber)"
+ //           let todayStr  = dateFormatter.string(from: today)
             periodStart    = dateFormatter.string(from: start)
             periodEnd      = dateFormatter.string(from: end)
             periodDuration = Double(bleData.periodDuration)
