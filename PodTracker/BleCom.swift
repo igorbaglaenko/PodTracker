@@ -195,6 +195,11 @@ extension PodBleCom : CBPeripheralDelegate {
                 SendBleMsg?.onBLEReceiveMsg(msgId: .scanning)
                 return
             }
+            else  {
+                if value.count < 56 && value[55] == 0 {
+                    return
+                }
+            }
         }
         SendBleMsg?.onBLEReceiveData(rowData: value)
     }

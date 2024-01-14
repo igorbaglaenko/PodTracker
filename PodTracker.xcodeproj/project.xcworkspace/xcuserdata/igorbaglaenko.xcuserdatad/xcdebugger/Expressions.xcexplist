@@ -26,6 +26,9 @@
          contextName = "closure #1 in closure #1 in ActivationView.body.getter:ActivationView.swift">
          <PersistentStrings>
             <PersistentString
+               value = "result">
+            </PersistentString>
+            <PersistentString
                value = "byte">
             </PersistentString>
             <PersistentString
@@ -93,6 +96,9 @@
             <PersistentString
                value = "bleData.completeMonitor">
             </PersistentString>
+            <PersistentString
+               value = "rawData[55]">
+            </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
@@ -150,6 +156,11 @@
       </ContextState>
       <ContextState
          contextName = "PodBleCom.centralManager(_:didDiscover:advertisementData:rssi:):BleCom.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "devAddr">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "decompressAray(inString:):ActivationView.swift">
@@ -168,6 +179,17 @@
             <PersistentString
                value = "devAddr">
             </PersistentString>
+            <PersistentString
+               value = "value[55]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GLOBAL">
+         <PersistentStrings>
+            <PersistentString
+               value = "peripheral.name">
+            </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
@@ -185,13 +207,13 @@
          contextName = "PodGlobalData.onReceiveMonitorData(rowBytes:):PodData.swift">
          <PersistentStrings>
             <PersistentString
-               value = "bleData.periodDuration">
+               value = "bleData.currentIndex">
             </PersistentString>
             <PersistentString
                value = "bleData.periodStartIndx">
             </PersistentString>
             <PersistentString
-               value = "bleData.currentIndex">
+               value = "bleData.periodDuration">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

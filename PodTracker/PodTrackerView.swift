@@ -98,7 +98,7 @@ struct PodTrackerView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
                     Menu ("Info") {
-                        Text("ver. 1.0.1 Aug 13,2023")
+                        Text("ver. 1.0.6 Jan 14,2024")
                         Text("Firmware: \(podData.codeVersion)")
                         Text("POD id: \(podData.macAddress)")
                     }
@@ -106,7 +106,7 @@ struct PodTrackerView: View {
                         Button(podData.muteAlarm) {
                             podData.changeMuteAlarm()
                         }
-                        NavigationLink("Weight bearing protocol" ) {
+                        NavigationLink("View Weight Bearing" ) {
                             BearingProtocolView()
                         }
                     }

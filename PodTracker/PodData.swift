@@ -60,7 +60,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     @Published var showActivation:   Bool   =  !UserDefaults.standard.bool(forKey: "ACTIVATION")
     @Published var podIDStr  :       String =  UserDefaults.standard.string(forKey: "POD_ID_STR")   ?? ""
     @Published var connectionStatus: String = "Disconnected"
-    @Published var batteryStatus:    String = "Battery Level: 100% "
+    @Published var batteryStatus:    String = ""
     @Published var codeVersion:      String = ""
     @Published var macAddress   :    String = ""
     @Published var frontPercentage:  Double = 0
@@ -144,10 +144,13 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         }
         // POD disconnected
         else if msgId == .disconnected {
-            if bleData.completeMonitor {
+            batteryStatus    = ""
+            overloadMsg      = ""
+//            if bleData.completeMonitor {
                 connectionStatus = "Disconected"
-            }
-            else if appActiveView {
+//            }
+            //else
+            if appActiveView {
                 bleData.startScan()
             }
         }
@@ -164,7 +167,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     func onBLEReceiveData(rowData: Data) {
         switch bleState {
         case .readPodId:
-            if rowData.count == 55 {
+            if rowData.count >= 55 {
                 onReceivePodID(rowBytes: rowData)
                 // Verify POD ID. Request Sync Time and Data
                 if bleData.validatePodData() {
@@ -227,7 +230,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
 // Update BLE Data
     func onReceivePodID(rowBytes: Data) {
         bleData.setPodIdData(rowBytes: rowBytes)
-        batteryStatus    = "Battery Level: \(bleData.batteryLevel)%"
+        setBatteryStatus ()
         connectionStatus = "Receiving Data ..."
         codeVersion      = bleData.codeVersion
         macAddress       = bleData.macAddr
@@ -267,7 +270,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
         // Status message
         connectionStatus = "Connected to POD"
         // Battery level
-        batteryStatus    = "Battery Level: \(bleData.batteryLevel)%"
+        setBatteryStatus ()
         // Gauge margins
         frontPercentage = Double(bleData.frontPercentage)
         backPercentage  = Double(bleData.backPercentage)
@@ -295,7 +298,7 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
             }
         }
         // Battery level
-        batteryStatus    = "Battery level \(bleData.batteryLevel)%"
+        setBatteryStatus ()
         // Gauge indicator
         if bleData.completeMonitor {
             backPosition  = 0
@@ -511,5 +514,18 @@ class PodGlobalData : ObservableObject , ReceiveBleData {
     func setGaugePosition () {
         backPosition  = bleData.backPosition
         frontPosition = bleData.frontPosition
+    }
+// Request to update Battery status
+    func setBatteryStatus () {
+        if bleData.batteryLevel == 0 {
+            batteryStatus = "Charge POD Battery!!!   "
+            overloadMsg   = "Monitoring stopped. CHARGE battery!"
+        }
+        else if bleData.batteryLevel < 10 {
+            batteryStatus = "Battery Low: \(bleData.batteryLevel)%"
+        }
+        else {
+            batteryStatus = "Battery: \(bleData.batteryLevel)%"
+        }
     }
 }
